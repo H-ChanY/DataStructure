@@ -48,45 +48,44 @@ int isEmpty(Stack* stack){
 
 int dfs(int start,int vertex_num){
     Stack* stack=create();
-    int cycle=0;
     push(stack,start);
     while(!isEmpty(stack)){
         int n=0;
         int a=pop(stack);
         Edge[a]=1;
-        chk[a]=1;
         for(int k=0;k<vertex_num;k++){
-            if((chk[k]==0)){
-                if(M[a][k]==1){
-                    n++;
-                    push(stack,k);
-                    if(Edge[k]==1){
-                        return 1;
-                    }
-                }        
-            }
+            if(chk[k]==1) continue;
+            if(M[a][k]==1){            
+                if(Edge[k]==1){
+                    return 1;
+                }
+                n++;
+                chk[k]=1;
+                push(stack,k);
+            }  
                 
-            }
-            if(n==0){
-                Edge[a]=0;
-            }
         }
+        if(n==0){    
+            Edge[a]=0;
+        }     
             
-    return cycle;
+        }
+    chk[start]=1; 
+    return 0;
 }
 
 void init(){
     for(int i=0; i<MAX; i++){
-        Edge[i]=-1;
+        chk[i]=-1;
         for(int k=0;k<MAX;k++){
             M[i][k]=0;
         }
     }
 }
 
-void init_Chk(){
+void init_Edge(){
         for(int i=0; i<MAX; i++){
-            chk[i]=-1;
+            Edge[i]=-1;
         }
 }
 int main(){
@@ -108,8 +107,9 @@ int main(){
             }
         }
         for(int fp=0;fp<N;fp++){
-            init_Chk();
+            init_Edge();
             cycle=dfs(fp,N);
+            if(cycle==1) break;
         }
         fprintf(fp_write,"%d\n",cycle);
     }
